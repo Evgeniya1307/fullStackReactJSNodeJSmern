@@ -7,6 +7,8 @@ app.get("/", (req, res) => {
   res.send("Hello World");
 });
 
+app.post('/autch/login')//отлавливаю запрос
+
 app.listen(4444, (err) => {
   if (err) {
     return console.log(err);
