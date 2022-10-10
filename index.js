@@ -1,5 +1,11 @@
 import express from "express"; //подключила express
-import jwt from "jsonwebtoken"
+import jwt from "jsonwebtoken";
+import mongoose from "mongoose"
+
+mongoose.connect('mongodb+srv://evgeniya:wwwwww@cluster0.56g92s3.mongodb.net/?retryWrites=true&w=majority').then(()=>console.log('DB ok'))
+.catch((err)=>console.log('DB error',err))
+
+
 
 // express будет хранится в app
 const app = express(); //соз-ла экспресс приложение
@@ -11,12 +17,10 @@ app.get("/", (req, res) => {
   //(req-что прислал клиент,res-что передаю обратно)
   res.send("Hello World");
 });
-
 // авторизация
 app.post('/auth/login', (req, res) => {
-  
-  //сгенерировать токен
- const token= jwt.sign({
+  //сгенерировать токен(дел-ю авториз)
+ const token= jwt.sign({ //сюда передаю инфу которую шифрую
     email: req.body.email,
     fullName: 'Вася Пупкин'
   },
@@ -29,7 +33,7 @@ app.post('/auth/login', (req, res) => {
   });
 }); //отлавливаю запрос
 
-app.listen(4444, (err) => {
+app.listen(4444, (err) => { //запускаю приложение на порт 4444
   if (err) {
     return console.log(err);
   }
