@@ -1,0 +1,1 @@
+import {body} from "express-validator"; //с помощью неё проверяю если в теле какая инфа
