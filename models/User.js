@@ -3,7 +3,7 @@ import mongoose from "mongoose";
 
 //схема моей табл
 const UserSchema = new mongoose.Schema({
-  fuulName: {
+  fullName: {
     //св-во
     type: String, //яв-ся строчкой
     required: true, //яв-ся обязательной для заполнения
