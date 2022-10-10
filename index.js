@@ -1,11 +1,13 @@
 import express from "express"; //подключила express
 import jwt from "jsonwebtoken";
-import mongoose from "mongoose"
+import mongoose from "mongoose";
 
-mongoose.connect('mongodb+srv://evgeniya:wwwwww@cluster0.56g92s3.mongodb.net/?retryWrites=true&w=majority').then(()=>console.log('DB ok'))
-.catch((err)=>console.log('DB error',err))
-
-
+mongoose
+  .connect(
+    "mongodb+srv://fox:wwwwww@cluster0.wwxynyy.mongodb.net/blog?retryWrites=true&w=majority"
+  )
+  .then(() => console.log("DB ok"))
+  .catch((err) => console.log("DB error", err));
 
 // express будет хранится в app
 const app = express(); //соз-ла экспресс приложение
@@ -18,22 +20,25 @@ app.get("/", (req, res) => {
   res.send("Hello World");
 });
 // авторизация
-app.post('/auth/login', (req, res) => {
+app.post("/auth/login", (req, res) => {
   //сгенерировать токен(дел-ю авториз)
- const token= jwt.sign({ //сюда передаю инфу которую шифрую
-    email: req.body.email,
-    fullName: 'Вася Пупкин'
-  },
-  'secret123',
-  );//(в скобках ук-ю что шифрую) 'с помощью ключа'
-  
+  const token = jwt.sign(
+    {
+      //сюда передаю инфу которую шифрую
+      email: req.body.email, //то что пользователь пришлёт
+      fullName: "Вася Пупкин",
+    },
+    "secret123"
+  ); //(в скобках ук-ю что шифрую) 'с помощью ключа'
+
   res.json({
     success: true,
-    token,
+    token, //верну в ответ клиенту
   });
 }); //отлавливаю запрос
 
-app.listen(4444, (err) => { //запускаю приложение на порт 4444
+app.listen(4444, (err) => {
+  //запускаю приложение на порт 4444
   if (err) {
     return console.log(err);
   }
