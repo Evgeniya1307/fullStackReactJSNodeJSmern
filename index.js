@@ -6,6 +6,8 @@ import jwt from "jsonwebtoken";
 
 import { registerValidation } from "./validations/auth.js";
 import UserModel from "./models/User.js";
+import checkAutch from "./models/utils/checkAuth.js"
+
 
 mongoose
   .connect(
@@ -115,7 +117,7 @@ res.json({
 
 
 //проверила могу ли получить инфу о себе
-app.get('/auth/me', (req, res)=>{
+app.get('/auth/me', checkAutch, (req, res)=>{
 try{
   //получаю инфу о пользователе
 } catch(err){
