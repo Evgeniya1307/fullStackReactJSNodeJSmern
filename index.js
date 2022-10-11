@@ -2,6 +2,7 @@ import express from "express";
 import mongoose from "mongoose";
 import { validationResult } from "express-validator"; //проверяет если ошибки
 import bcrypt from "bcrypt"; //шифруется с помощью неё
+import  jwt  from "jsonwebtoken";
 
 import { registerValidation } from "./validations/auth.js";
 import UserModel from "./models/User.js";
@@ -46,8 +47,13 @@ const doc = new UserModel({
 const user = await doc.save()//необходимо сох-ть в базе данных
 
 const token = jwt.sign({ //соз-ла токен он хр-ит зашифрованную инфу
-_id: user._id
-});
+_id: user._id,
+},
+'secret123', //второй параметр ключ который зашифровала токен
+{
+  expiresIn:'30d'//сколько времени будет хр-ся мой токен
+}
+);
 
 
 res.json(user)//верну инфу о пользователе ответ всегда один
