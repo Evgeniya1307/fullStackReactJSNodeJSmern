@@ -1,6 +1,6 @@
 import express from "express";
 import mongoose from "mongoose";
-import { validationResult } from "express-validator"; //проверяет если ошибки
+import { body, validationResult } from "express-validator"; //проверяет если ошибки
 import bcrypt from "bcrypt"; //шифруется с помощью неё
 import jwt from "jsonwebtoken";
 
@@ -22,11 +22,27 @@ app.use(express.json());
 
 
 //авторизация
-app.post("/auth/login", (req, res)=>{
+app.post("/auth/login",async(req, res)=>{
   try{
-    //описываю что хочу чд-ть авторизацию
-  } catch(err){}
-})
+   const user = await UserModel.findOne({email:req.body.email}) //описываю что хочу сд-ть авторизацию найти пользователя есть ли он в базе даннцых
+  if(!user){//если нет останови код и верни ответ
+return req.status(404).json({
+  message: 'Пользователь не найден', //уточнила для себя как тест (на реальном либо почта либо пароль неверен,для злоумышлиника)
+});
+  }
+  //проверяю если нашёлся
+  const isValidPass = await bcrypt.compare(req.body.password, user._doc.passwordHash)//проверить пароль сходится ли с паролем в теле запроса и который в документе у пользователя
+  if(!isValidPass){//если не сходятся то оповестить пользователя
+    return req.status(404).json({
+      message: 'Неверный логин или пароль',
+    });
+  }
+//если авторизовался создала новый токен
+
+
+
+} catch(err){}
+});
 
 // регистрация
 app.post("/auth/register", registerValidation, async (req, res) => {
