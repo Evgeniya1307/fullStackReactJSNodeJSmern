@@ -2,7 +2,7 @@ import express from "express";
 import mongoose from "mongoose";
 import { validationResult } from "express-validator"; //проверяет если ошибки
 import bcrypt from "bcrypt"; //шифруется с помощью неё
-import  jwt  from "jsonwebtoken";
+import jwt from "jsonwebtoken";
 
 import { registerValidation } from "./validations/auth.js";
 import UserModel from "./models/User.js";
@@ -20,7 +20,15 @@ const app = express(); //соз-ла экспресс приложение
 // позволит читать JSON в запросах
 app.use(express.json());
 
-// авторизация
+
+//авторизация
+app.post("/auth/login", (req, res)=>{
+  try{
+    //описываю что хочу чд-ть авторизацию
+  } catch(err){}
+})
+
+// регистрация
 app.post("/auth/register", registerValidation, async (req, res) => {
   try{ //обернула в tru/catch
 // если придёт запрос на /auth/register то проверю если то что хочу то выполни сл,часть req, res
@@ -32,14 +40,14 @@ if (!errors.isEmpty()) {
 
 const password = req.body.password; //вытащить password(пароль)
 const salt = await bcrypt.genSalt(10); //у меня есть bcrypt и я её сгенерирую , salt-что то вроде алгоритма шифрования пароля
-const passwordHash = await bcrypt.hash(password, salt); //шифрую пароль с помощью bcrypt передаю сам открытый пароль и шифрование пароля
+const hash = await bcrypt.hash(password, salt); //шифрую пароль с помощью bcrypt передаю сам открытый пароль и шифрование пароля
 
 //подготовила документ на создания пользователя
 const doc = new UserModel({
   email: req.body.email, //передаю всё что есть в базе
   fullName: req.body.fullName,
   avatarUrl: req.body.avatarUrl,
-  passwordHash,
+  passwordHash: hash,
 });
 
 
@@ -54,12 +62,14 @@ _id: user._id,
   expiresIn:'30d',//сколько времени будет хр-ся мой токен
 },
 );
+ //десктруктуризация вытаскиваю passwordHash но не использую 
+const { passwordHash, ...userData} = user._doc;//в юзер есть док из него вытаскиваю passwordHash и userData
 
 
 res.json({
-  ...user,
+  ...userData,
   token,
-})//верну инфу о пользователе и сам токен 
+})//верну инфу о пользователе документ и сам токен 
   } catch (err) {
     console.log(err);//храню для себя
     res.status(500).json({
