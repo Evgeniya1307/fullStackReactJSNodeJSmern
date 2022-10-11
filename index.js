@@ -26,22 +26,41 @@ app.post("/auth/login",async(req, res)=>{
   try{
    const user = await UserModel.findOne({email:req.body.email}) //описываю что хочу сд-ть авторизацию найти пользователя есть ли он в базе даннцых
   if(!user){//если нет останови код и верни ответ
-return req.status(404).json({
+return res.status(404).json({
   message: 'Пользователь не найден', //уточнила для себя как тест (на реальном либо почта либо пароль неверен,для злоумышлиника)
 });
   }
   //проверяю если нашёлся
   const isValidPass = await bcrypt.compare(req.body.password, user._doc.passwordHash)//проверить пароль сходится ли с паролем в теле запроса и который в документе у пользователя
   if(!isValidPass){//если не сходятся то оповестить пользователя
-    return req.status(404).json({
+    return res.status(404).json({
       message: 'Неверный логин или пароль',
     });
   }
-//если авторизовался создала новый токен
+//если авторизовался создала новый токен генерирую его
+const token = jwt.sign(
+  {
+    _id: user._id,
+},
+'secret123',
+{
+  expiresIn:'30d',
+},
+);
 
-
-
-} catch(err){}
+//вытаскиваю инфу
+const { passwordHash, ...userData} = user._doc;
+//возвращаю ответ
+res.json({
+  ...userData,
+  token,
+});
+} catch(err){ //если была ошибка оповести об этом
+console.log(err);
+res.status(500).json({
+  message: 'Не удалось авторизоваться',
+})
+}
 });
 
 // регистрация
@@ -93,6 +112,10 @@ res.json({
 });
 }
 });
+
+
+//проверила могу ли получить инфу о себе
+
 app.listen(4444, (err) => {
   //запускаю приложение на порт 4444
   if (err) {
