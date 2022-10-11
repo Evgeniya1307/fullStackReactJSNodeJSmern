@@ -22,4 +22,4 @@ const UserSchema = new mongoose.Schema({
    timestamps:true //обязательно должны быть создание и обновление даты
 });
 
-export default mongoose.model(User, UserSchema);
+export default mongoose.model('User', UserSchema);

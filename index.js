@@ -21,36 +21,34 @@ app.use(express.json());
 
 // авторизация
 app.post("/auth/register", registerValidation, async (req, res) => {
-  // если придёт запрос на /auth/register то проверю если то что хочу то выполни сл,часть req, res
-  const errors = validationResult(req); //всё вытащи из запроса
-  if (!errors.isEmpty()) {
-    //если ошибки
-    return res.status(400).json(errors.array());
-  }
+  try{ //обернула в tru/catch
+// если придёт запрос на /auth/register то проверю если то что хочу то выполни сл,часть req, res
+const errors = validationResult(req); //всё вытащи из запроса
+if (!errors.isEmpty()) {
+  //если ошибки
+  return res.status(400).json(errors.array());
+}
 
-  const password = req.body.password; //вытащить password(пароль)
-  const salt = await bcrypt.genSalt(10); //у меня есть bcrypt и я её сгенерирую , salt-что то вроде алгоритма шифрования пароля
-  const passwordHash = await bcrypt.hash(password, salt); //шифрую пароль с помощью bcrypt передаю сам открытый пароль и шифрование пароля
+const password = req.body.password; //вытащить password(пароль)
+const salt = await bcrypt.genSalt(10); //у меня есть bcrypt и я её сгенерирую , salt-что то вроде алгоритма шифрования пароля
+const passwordHash = await bcrypt.hash(password, salt); //шифрую пароль с помощью bcrypt передаю сам открытый пароль и шифрование пароля
 
-  //подготовила документ на создания пользователя
-  const doc = new UserModel({
-    email: req.body.email, //передаю всё что есть в базе
-    fullName: req.body.fullName,
-    avatarUrl: req.body.avatarUrl,
-    passwordHash,
-  });
+//подготовила документ на создания пользователя
+const doc = new UserModel({
+  email: req.body.email, //передаю всё что есть в базе
+  fullName: req.body.fullName,
+  avatarUrl: req.body.avatarUrl,
+  passwordHash,
+});
 
 
 //соз-ла самого пользователя
 const user = await doc.save()//необходимо сох-ть в базе данных
 
-
-  res.json({
-    //если ошибок нет
-    success: true,
-  });
-});
-
+res.json(user)//верну инфу о пользователе
+  } catch (err) {
+  }
+})
 app.listen(4444, (err) => {
   //запускаю приложение на порт 4444
   if (err) {
