@@ -2,6 +2,7 @@ import express from "express";
 import mongoose from "mongoose";
 import { registerValidation, loginValidation, postCreateValidation } from "./validations.js";
 import checkAuth from "./models/utils/checkAuth.js";
+import multer from "multer";//для загрузки файлов
 
 import * as UserController from "./controllers/UserController.js"
 import * as PostController from "./controllers/PostController.js"
@@ -15,6 +16,10 @@ mongoose
 
 // express будет хранится в app
 const app = express(); //соз-ла экспресс приложение
+
+//создаю хранилище для картинок
+
+
 
 // позволит читать JSON в запросах
 app.use(express.json());
@@ -33,7 +38,7 @@ app.get('/posts', PostController.getAll);//на получение всех ст
 app.get('/posts/:id', PostController.getOne)//на получение 1 статьи
 app.post('/posts/', checkAuth, postCreateValidation, PostController.create)//создать статью
 app.delete('/posts/:id',checkAuth, PostController.remove),//на удаление статьи
-app.patch('/posts', PostController.update)//на обновление
+app.patch('/posts/:id',checkAuth, PostController.update)//на обновление
 
 
 //запускаю приложение на порт 4444

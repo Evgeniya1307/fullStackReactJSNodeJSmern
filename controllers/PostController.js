@@ -1,3 +1,4 @@
+import { request } from "express";
 import { model } from "mongoose";
 import PostModel from "../models/Post.js";
 
@@ -123,8 +124,26 @@ export const remove = async (req, res) => {
 //обновление статьи
 export const update = async(req, res) =>{
     try{
-        
+        const postId = req.params.id;
+    await PostModel.updateOne({ //найти 1 статью и обновить 
+_id: postId,
+    }, 
+    { //что хочу обновить 
+title: req.body.title,
+text: req.body.text,
+imageUrl: req.body.imageUrl,
+user: req.userId,
+tags: req.body.tags,
+    },
+    )
+    //выполнился тогда
+    res.json({
+        success:true
+    });
     } catch(err){
-
+console.log(err);
+res.status(500).json({
+    message: 'Не удалось обновить статью',
+});
     }
-}
+};
