@@ -31,9 +31,9 @@ app.get("/auth/me", checkAuth, UserController.getMe); //запускаю и на
 
 app.get('/posts', PostController.getAll);//на получение всех статей
 app.get('/posts/:id', PostController.getOne)//на получение 1 статьи
-app.post('/posts/:id', checkAuth, postCreateValidation, PostController.create)//создать статью
-app.delete('/posts', PostController.remove),//на удаление статьи
-//app.patch('/posts', PostController.update)//на обновление
+app.post('/posts/', checkAuth, postCreateValidation, PostController.create)//создать статью
+app.delete('/posts/:id',checkAuth, PostController.remove),//на удаление статьи
+app.patch('/posts', PostController.update)//на обновление
 
 
 //запускаю приложение на порт 4444
