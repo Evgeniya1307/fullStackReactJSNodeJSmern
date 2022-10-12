@@ -4,8 +4,16 @@ import PostModel from "../models/Post.js";
 
 //получение всех статей 
 export const getAll= async(req, res)=>{
-
+try{
+const posts = await PostModel.find().populate('user').exec()//вернуть все статьи exec()-выполни мой запрос
+res.json(posts)//вернуть массив статей
+} catch(err){
+console.log(err);
+res.status(500).json({
+    message: 'Не удалось получить статьи',
+});
 }
+};
 
 // создание статей
 export const create = async (req, res) => {
