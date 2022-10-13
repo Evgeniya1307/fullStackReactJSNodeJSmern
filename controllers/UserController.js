@@ -6,14 +6,6 @@ import UserModel from "../models/User.js";
 //описываю методы
 export const register = async (req, res) => {
     try {
-      //обернула в tru/catch
-      // если придёт запрос на /auth/register то проверю если то что хочу то выполни сл,часть req, res
-      const errors = validationResult(req); //всё вытащи из запроса
-      if (!errors.isEmpty()) {
-        //если ошибки
-        return res.status(400).json(errors.array());
-      }
-  
       const password = req.body.password; //вытащить password(пароль)
       const salt = await bcrypt.genSalt(10); //у меня есть bcrypt и я её сгенерирую , salt-что то вроде алгоритма шифрования пароля
       const hash = await bcrypt.hash(password, salt); //шифрую пароль с помощью bcrypt передаю сам открытый пароль и шифрование пароля
