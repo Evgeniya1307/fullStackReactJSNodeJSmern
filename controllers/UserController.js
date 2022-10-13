@@ -1,6 +1,5 @@
 import bcrypt from "bcrypt"; //шифруется с помощью неё
 import jwt from "jsonwebtoken";
-import { body, validationResult } from "express-validator"; //проверяет если ошибки
 import UserModel from "../models/User.js";
 
 //описываю методы

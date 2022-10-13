@@ -7,11 +7,10 @@ import {
   loginValidation,
   postCreateValidation,
 } from "./validations.js";
-import {checkAuth, handleValidationErrors} from "./utils/index.js";
-import  {UserController, PostController} from "./controllers/index.js"
+import {handleValidationErrors, checkAuth  } from "./utils/index.js";
+import { UserController, PostController } from "./controllers/index.js";
 
-
-
+// эта библиотека позволяет работать с MONGODB
 mongoose
   .connect(
     "mongodb+srv://fox:wwwwww@cluster0.wwxynyy.mongodb.net/blog?retryWrites=true&w=majority"
@@ -26,11 +25,11 @@ const app = express(); //соз-ла экспресс приложение
 const storage = multer.diskStorage({
   destination: (_, __, cb) => {
     // путь куда буду сохранять картинки (ук-ла нижнее подчеркивание и коллбэк)
-    cb(null, "uploads");; //не получает ошибки и сохраняет в папку upload
+    cb(null, "uploads"); //не получает ошибки и сохраняет в папку upload
   },
   //как наз-ся мой файл
   filename: (_, file, cb) => {
-    cb(null, file.originalname);; //вытащить оригинал название
+    cb(null, file.originalname); //вытащить оригинал название
   },
 });
 
@@ -38,7 +37,7 @@ const upload = multer({ storage }); //у мульта есть хранилищ�
 
 // позволит читать JSON в запросах
 app.use(express.json());
-app.use(cors());
+app.use(cors());// позволяет убрать блокировку доменов
 app.use("/uploads", express.static("uploads")); //проверяй есть ли то что я передаю
 
 //авторизация
