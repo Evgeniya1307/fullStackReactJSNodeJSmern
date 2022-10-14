@@ -35,8 +35,8 @@ const storage = multer.diskStorage({
 
 const upload = multer({ storage }); //у мульта есть хранилище
 
-// позволит читать JSON в запросах
-app.use(express.json());
+
+app.use(express.json());// позволит читать JSON в запросах
 app.use(cors());// позволяет убрать блокировку доменов
 app.use("/uploads", express.static("uploads")); //проверяй есть ли то что я передаю
 
@@ -68,6 +68,7 @@ app.post("/upload/", checkAuth, upload.single("image"), (req, res) => {
 });
 
 app.get("/posts", PostController.getAll); //на получение всех статей
+app.get("/posts/tags", PostController.getLastTags)//роут на получения тэгов
 app.get("/posts/:id", PostController.getOne); //на получение 1 статьи
 app.post(
   "/posts/",
