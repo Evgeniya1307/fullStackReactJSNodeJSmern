@@ -2,6 +2,24 @@ import { request } from "express";
 import { model } from "mongoose";
 import PostModel from "../models/Post.js";
 
+//получение тэгов соз-ла новый метод
+export const getLastTags = async (req, res) => {
+  try {
+    const posts = await PostModel.find().limit(5).exec();
+    const tags = posts
+      .map((obj) => obj.tags)
+      .flat()
+      .slice(0, 5); //из этого массива взять статьи с мапом беру каждый объект вытаскиваю все статьи flat()и слайсом последние 5 статей
+
+    res.json(tags);
+  } catch (err) {
+    console.log(err);
+    res.status(500).json({
+      message: "Не удалось получить тэгги",
+    });
+  }
+};
+
 //получение всех статей
 export const getAll = async (req, res) => {
   try {
@@ -51,7 +69,7 @@ export const getOne = async (req, res) => {
         //если статья нашлась
         res.json(doc);
       }
-    );
+    ).populate("user"); //для создание статьие на фронтенде чтобы user отобразился
   } catch (err) {
     console.log(err);
     res.status(500).json({
@@ -68,8 +86,8 @@ export const create = async (req, res) => {
       title: req.body.title,
       text: req.body.text,
       imageUrl: req.body.imageUrl,
-      tags: req.body.tags,
       user: req.userId, //то что доверяю бэку вытаскиваю
+      tags: req.body.tags.split(','),//превратила строчку в массив для отправки на бэк
     });
 
     //когда док подготовлен его нужно создать
@@ -109,9 +127,9 @@ export const remove = async (req, res) => {
         }
         //если статья нашлась и удалилась
         res.json({
-            succes: true,
+          succes: true,
         });
-      },
+      }
     );
   } catch (err) {
     console.log(err);
@@ -122,28 +140,31 @@ export const remove = async (req, res) => {
 };
 
 //обновление статьи
-export const update = async(req, res) =>{
-    try{
-        const postId = req.params.id;
-    await PostModel.updateOne({ //найти 1 статью и обновить 
-_id: postId,
-    }, 
-    { //что хочу обновить 
-title: req.body.title,
-text: req.body.text,
-imageUrl: req.body.imageUrl,
-user: req.userId,
-tags: req.body.tags,
-    },
-    )
+export const update = async (req, res) => {
+  try {
+    const postId = req.params.id;
+    await PostModel.updateOne(
+      {
+        //найти 1 статью и обновить
+        _id: postId,
+      },
+      {
+        //что хочу обновить
+        title: req.body.title,
+        text: req.body.text,
+        imageUrl: req.body.imageUrl,
+        user: req.userId,
+        tags: req.body.tags,
+      }
+    );
     //выполнился тогда
     res.json({
-        success:true
+      success: true,
     });
-    } catch(err){
-console.log(err);
-res.status(500).json({
-    message: 'Не удалось обновить статью',
-});
-    }
+  } catch (err) {
+    console.log(err);
+    res.status(500).json({
+      message: "Не удалось обновить статью",
+    });
+  }
 };

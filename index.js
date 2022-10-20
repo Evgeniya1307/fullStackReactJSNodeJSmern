@@ -13,8 +13,7 @@ import { UserController, PostController } from "./controllers/index.js";
 // эта библиотека позволяет работать с MONGODB
 mongoose
   .connect(
-    "mongodb+srv://fox:wwwwww@cluster0.wwxynyy.mongodb.net/blog?retryWrites=true&w=majority"
-  )
+    process.env.MONGODB_URL)//до этого была ссылка"mongodb+srv://fox:wwwwww@cluster0.wwxynyy.mongodb.net/blog?retryWrites=true&w=majority"для загрузки на heroku
   .then(() => console.log("DB ok"))
   .catch((err) => console.log("DB error", err));
 
@@ -67,6 +66,7 @@ app.post("/upload/", checkAuth, upload.single("image"), (req, res) => {
   });
 });
 
+app.get("/tags", PostController.getLastTags);
 app.get("/posts", PostController.getAll); //на получение всех статей
 app.get("/posts/tags", PostController.getLastTags)//роут на получения тэгов
 app.get("/posts/:id", PostController.getOne); //на получение 1 статьи
@@ -86,8 +86,8 @@ app.delete("/posts/:id", checkAuth, PostController.remove), //на удален�
     PostController.update
   ); //на обновление
 
-//запускаю приложение на порт 4444
-app.listen(4444, (err) => {
+//запускаю приложение на порт 4444, после этого  указываю process  когда заливаю на heroku
+app.listen(process.env.PORT ||4444, (err) => {
   if (err) {
     return console.log(err);
   }
