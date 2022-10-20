@@ -7,13 +7,12 @@ import {
   loginValidation,
   postCreateValidation,
 } from "./validations.js";
-import {handleValidationErrors, checkAuth  } from "./utils/index.js";
+import { handleValidationErrors, checkAuth } from "./utils/index.js";
 import { UserController, PostController } from "./controllers/index.js";
 
 // эта библиотека позволяет работать с MONGODB
 mongoose
-  .connect(
-    process.env.MONGODB_URL)//до этого была ссылка"mongodb+srv://fox:wwwwww@cluster0.wwxynyy.mongodb.net/blog?retryWrites=true&w=majority"для загрузки на heroku
+  .connect(process.env.MONGODB_URI) //до этого была ссылка"mongodb+srv://fox:wwwwww@cluster0.wwxynyy.mongodb.net/blog?retryWrites=true&w=majority"для загрузки на heroku
   .then(() => console.log("DB ok"))
   .catch((err) => console.log("DB error", err));
 
@@ -34,9 +33,8 @@ const storage = multer.diskStorage({
 
 const upload = multer({ storage }); //у мульта есть хранилище
 
-
-app.use(express.json());// позволит читать JSON в запросах
-app.use(cors());// позволяет убрать блокировку доменов
+app.use(express.json()); // позволит читать JSON в запросах
+app.use(cors()); // позволяет убрать блокировку доменов
 app.use("/uploads", express.static("uploads")); //проверяй есть ли то что я передаю
 
 //авторизация
@@ -68,7 +66,7 @@ app.post("/upload/", checkAuth, upload.single("image"), (req, res) => {
 
 app.get("/tags", PostController.getLastTags);
 app.get("/posts", PostController.getAll); //на получение всех статей
-app.get("/posts/tags", PostController.getLastTags)//роут на получения тэгов
+app.get("/posts/tags", PostController.getLastTags); //роут на получения тэгов
 app.get("/posts/:id", PostController.getOne); //на получение 1 статьи
 app.post(
   "/posts/",
@@ -87,7 +85,7 @@ app.delete("/posts/:id", checkAuth, PostController.remove), //на удален�
   ); //на обновление
 
 //запускаю приложение на порт 4444, после этого  указываю process  когда заливаю на heroku
-app.listen(process.env.PORT ||4444, (err) => {
+app.listen(process.env.PORT || 4444, (err) => {
   if (err) {
     return console.log(err);
   }
